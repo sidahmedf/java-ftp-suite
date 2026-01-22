@@ -13,10 +13,25 @@ public class ClientFTP {
 
 
     // Pour se connecter au serveur FTP
-    public void connect (String server, int port) {
+    public void connect (String server, int port) throws IOException {
         System.out.println("Connecting to " + server + " on port " + port);
 
-        // TODO: Implémenter la connexion au serveur FTP
+        socket = new Socket(server, port);
+
+        reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        writer = new PrintWriter(socket.getOutputStream(), true);
+
+        String response = reader.readLine();
+        System.out.println("Server response: " + response);
+
+        if (response.startsWith("220")) {
+            isConnected = true;
+            System.out.println("Connected to the FTP server.");
+        } else {
+            throw new IOException("Failed to connect to the FTP server : " + response);
+        }
+
+
 
     }
 
