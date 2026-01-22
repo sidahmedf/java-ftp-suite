@@ -14,7 +14,7 @@ public class Main {
             client.connect(server, 21);
 
             // Tentative de login (hardcodée pour l'instant)
-            boolean loggedIn = client.login("anonymous", "");
+            boolean loggedIn = client.login("anonymous", "guest");
 
             if (loggedIn) {
 

@@ -37,11 +37,30 @@ public class ClientFTP {
 
 
     // Pour se logger avec un nom d'utilisateur et un mot de passe
-    public boolean login(String user, String pass)  {
+    public boolean login(String user, String pass) throws IOException  {
         System.out.println("Attempting login as " + user);
 
-        // TODO: Implémenter USER et PASS
-        return false;
+        // Envoyer USER
+        writer.println("USER " + user);
+        // Lire la réponse du serveur  (doit etre 331)
+        String response = readResponse();
+        if (!response.startsWith("331") && !response.startsWith("230")) {
+            System.out.println("Login failed at USER step: " + response);
+            return false;
+        }
+
+        // Envoyer PASS
+        writer.println("PASS " + pass);
+        // Lire la réponse du serveur (doit etre 230)
+        response = readResponse();
+        if (response.startsWith("230")) {
+            System.out.println("Login successful.");
+            return true;
+        } else {
+            System.out.println("Login failed at PASS step: " + response);
+            return false ;
+        }
+
     }
 
     // Pour lister les fichiers dans le répertoire courant
@@ -70,6 +89,12 @@ public class ClientFTP {
 
         // TODO : déconnecter proprement
         System.out.println("Disconnected.");
+    }
+
+    private String readResponse() throws IOException {
+        String line = reader.readLine();
+        System.out.println("SERVER: " + line);
+        return line;
     }
 
 
