@@ -9,6 +9,9 @@ public class Explorer {
     public void start() {
         System.out.println("Starting tree exploration...");
         // TODO : Appeler méthode qui implémnte LIST et explorer récursivement
+        try {
+            client.listFiles();
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     private void explore(String currentPath) {

@@ -4,7 +4,13 @@ public class Main {
 
     public static void main(String[] args) {
 
-        String server = "ftp.ubuntu.com";
+
+        //String server = "ftp.ubuntu.com";
+        String server = "ftp.free.fr";
+        //String server = "ftp.gnu.org";
+        //String server = "ftp.funet.fi";
+        //String server = "ftp.debian.org";
+        //String server = "test.rebex.net"; // (logic: demo , password: password)
 
         ClientFTP client = new ClientFTP();
 

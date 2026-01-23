@@ -66,13 +66,26 @@ public class ClientFTP {
     // Pour lister les fichiers dans le répertoire courant
     public void listFiles() throws IOException {
 
+        // Ouvrir une connexion de données en mode passif (Obligatoire pour LIST)
+        Socket dataSocket = openDataConnection();
 
         // Envoyer la commande LIST et lire la réponse (Sockets writer et reader)
         writer.println("LIST");
         readResponse();
 
+        // Lire les données de la connexion de données (Socket dataSocket !)
+        BufferedReader dataReader = new BufferedReader(new InputStreamReader(dataSocket.getInputStream()));
 
+        // Boucle de lecture des lignes reçues
+        String line;
+        while((line = dataReader.readLine()) != null) {
+            System.out.println(line);
+        }
 
+        // Fermer la connexion de données
+        dataSocket.close();
+
+        readResponse();
     }
 
     // Pour changer de répertoire
@@ -143,6 +156,10 @@ public class ClientFTP {
 
 
     }
+
+
+
+
 
 
 }
