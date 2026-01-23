@@ -66,7 +66,13 @@ public class ClientFTP {
     // Pour lister les fichiers dans le répertoire courant
     public void listFiles() throws IOException {
 
-        // TODO: Implémenter LIST
+
+        // Envoyer la commande LIST et lire la réponse (Sockets writer et reader)
+        writer.println("LIST");
+        readResponse();
+
+
+
     }
 
     // Pour changer de répertoire
@@ -97,6 +103,46 @@ public class ClientFTP {
         return line;
     }
 
+    private Socket openDataConnection() throws IOException {
+
+        // Envoyer la commande PASV et lire la réponse
+        writer.println("PASV");
+        String response = readResponse();
+
+        // Analyser la réponse pour obtenir l'adresse IP et le port
+        if (!response.startsWith("227")) {
+            throw new IOException("Error entering passive mod: " + response);
+        }
+
+        int openParen = response.indexOf('(');
+        int closeParen = response.indexOf(')');
+
+        if (openParen == -1 || closeParen == -1) {
+            throw new IOException("Error when parse PASV response: " + response);
+        }
+
+        String content  = response.substring(openParen+1, closeParen);
+
+        // Ex: 192,168,1,2,7,138
+        String[] parts = content.split(",");
+
+        String ip = parts[0] + "." + parts[1] + "." + parts[2] + "." + parts[3];
+
+        String p1_str = parts[4];
+        String p2_str = parts[5];
+
+        int p1 = Integer.parseInt(p1_str);
+        int p2 = Integer.parseInt(p2_str);
+
+        // Calcul du port
+        int dataPort = (p1* 256) + p2;
+
+        // Etablir la connexion de données et la retourner
+        Socket dataSocket = new Socket(ip, dataPort);
+        return dataSocket;
+
+
+    }
 
 
 }
