@@ -1,5 +1,7 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientFTP {
 
@@ -64,42 +66,77 @@ public class ClientFTP {
     }
 
     // Pour lister les fichiers dans le répertoire courant
-    public void listFiles() throws IOException {
+    public List<String> listFiles() throws IOException {
 
         // Ouvrir une connexion de données en mode passif (Obligatoire pour LIST)
         Socket dataSocket = openDataConnection();
 
         // Envoyer la commande LIST et lire la réponse (Sockets writer et reader)
         writer.println("LIST");
-        readResponse();
+        String response = readResponse();
+
+        // Vérifier que la réponse est correcte (150 ou 125)
+        if (!response.startsWith("150") && !response.startsWith("125")) {
+            throw new IOException("Server refused LIST: " + response);
+        }
 
         // Lire les données de la connexion de données (Socket dataSocket !)
         BufferedReader dataReader = new BufferedReader(new InputStreamReader(dataSocket.getInputStream()));
 
-        // Boucle de lecture des lignes reçues
+        // créer une liste pour stocker les fichiers
+        List<String> files = new ArrayList<>();
+
+        // Boucle les lignes reçues pour remplir la liste (les ajouter une par une)
         String line;
         while((line = dataReader.readLine()) != null) {
-            System.out.println(line);
+            files.add(line);
         }
 
-        // Fermer la connexion de données
+        // Fermer la connexion de données et le reader de données
         dataSocket.close();
+        dataReader.close();
 
         readResponse();
+
+        return files;
     }
 
     // Pour changer de répertoire
-    public boolean changeDirectory(String dir) {
+    public boolean changeDirectory(String dir) throws IOException {
 
-        // TODO: Implémenter CWD
-        return false;
+        //System.out.println("DEBUG: Changing directory to: " + dir);
+
+        // Enovyer la requête CWD
+        writer.println("CWD " + dir);
+
+        // lire la réponse
+        String response = readResponse();
+
+        // Retourner true si succès (code 250)
+        if (response.startsWith("250")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     // Pour remonter d'un répertoire
     public boolean changeDirectoryUp() throws IOException {
 
-        // TODO: Implémenter CDUP
-        return false;
+        //System.out.println("DEBUG: Moving up (CDUP)...");
+
+        // Envoyer la requête CDUP
+        writer.println("CDUP");
+
+        // lire la réponse
+        String response = readResponse();
+
+        // Retourner true si succès (code 250 ou 200)
+        if (response.startsWith("250") || response.startsWith("200")) {;
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -112,7 +149,7 @@ public class ClientFTP {
 
     private String readResponse() throws IOException {
         String line = reader.readLine();
-        System.out.println("SERVER: " + line);
+        //System.out.println("SERVER: " + line);
         return line;
     }
 

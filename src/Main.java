@@ -5,8 +5,9 @@ public class Main {
     public static void main(String[] args) {
 
 
+        String server = "localhost";
         //String server = "ftp.ubuntu.com";
-        String server = "ftp.free.fr";
+        //String server = "ftp.free.fr";
         //String server = "ftp.gnu.org";
         //String server = "ftp.funet.fi";
         //String server = "ftp.debian.org";
@@ -17,7 +18,7 @@ public class Main {
         try {
 
             // Connexion au serveur FTP
-            client.connect(server, 21);
+            client.connect(server, 2121);
 
             // Tentative de login (hardcodée pour l'instant)
             boolean loggedIn = client.login("anonymous", "guest");
