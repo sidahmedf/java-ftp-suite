@@ -1,8 +1,17 @@
+package fr.univlille.sr1.treeftp;
+
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Gère la communication réseau de bas niveau avec le serveur FTP.
+ * Implémente les commandes FTP standards (USER, PASS, LIST, CWD, PASV) selon la RFC 959.
+ *
+ * @author Sid-Ahmed Ferroudj
+ */
 public class ClientFTP {
 
     // Sockets et flux de communication
@@ -14,7 +23,13 @@ public class ClientFTP {
     private boolean isConnected = false;
 
 
-    // Pour se connecter au serveur FTP
+    /**
+     * Établit la connexion TCP avec le serveur FTP spécifié.
+     *
+     * @param server L'adresse du serveur (ex: "localhost" ou "ftp.ubuntu.com").
+     * @param port   Le port FTP (généralement 21).
+     * @throws IOException Si la connexion échoue.
+     */
     public void connect (String server, int port) throws IOException {
         System.out.println("Connecting to " + server + " on port " + port);
 
@@ -35,7 +50,14 @@ public class ClientFTP {
     }
 
 
-    // Pour se logger avec un nom d'utilisateur et un mot de passe
+    /**
+     * Authentifie l'utilisateur auprès du serveur FTP.
+     *
+     * @param user Le nom d'utilisateur.
+     * @param pass Le mot de passe.
+     * @return true si l'authentification réussit, false sinon.
+     * @throws IOException En cas d'erreur réseau.
+     */
     public boolean login(String user, String pass) throws IOException  {
         System.out.println("Attempting login as " + user);
 
@@ -62,7 +84,13 @@ public class ClientFTP {
 
     }
 
-    // Pour lister les fichiers dans le répertoire courant
+    /**
+     * Récupère la liste des fichiers et dossiers du répertoire courant.
+     * Utilise le Mode Passif (PASV) pour établir la connexion de données.
+     *
+     * @return Une liste de chaînes, où chaque chaîne représente une entrée de fichier.
+     * @throws IOException Si la commande LIST échoue.
+     */
     public List<String> listFiles() throws IOException {
 
         // Ouvrir une connexion de données en mode passif (Obligatoire pour LIST)
@@ -98,7 +126,12 @@ public class ClientFTP {
         return files;
     }
 
-    // Pour changer de répertoire
+    /**
+     * Change le répertoire de travail courant (CWD).
+     *
+     * @param dir Le nom du dossier dans lequel entrer.
+     * @return true si le changement a réussi, false sinon.
+     */
     public boolean changeDirectory(String dir) throws IOException {
 
         //System.out.println("DEBUG: Changing directory to: " + dir);
@@ -117,7 +150,11 @@ public class ClientFTP {
         }
     }
 
-    // Pour remonter d'un répertoire
+    /**
+     * Remonte d'un niveau dans l'arborescence (CDUP).
+     *
+     * @return true si l'opération a réussi.
+     */
     public boolean changeDirectoryUp() throws IOException {
 
         //System.out.println("DEBUG: Moving up (CDUP)...");
@@ -137,19 +174,41 @@ public class ClientFTP {
     }
 
 
-    // Pour se déconnecter du serveur FTP
+    /**
+     * Déconnecte proprement le client du serveur en envoyant la commande QUIT.
+     */
     public void disconnect() throws IOException {
 
-        // TODO : déconnecter proprement
+        if (isConnected && writer != null) {
+            writer.println("QUIT");
+
+            // On attends une réponse 221 Goodbye, mais on ferme quand même
+            try {
+                if (socket != null && !socket.isClosed()) {
+                    socket.close();
+                }
+            } catch (IOException e) {
+                // Ignore errors during close
+            }
+        }
         System.out.println("Disconnected.");
     }
 
+    /**
+     * Lit une ligne de réponse depuis le serveur (Connexion de commande).
+     */
     private String readResponse() throws IOException {
         String line = reader.readLine();
         //System.out.println("SERVER: " + line);
         return line;
     }
 
+    /**
+     * Gère la commande PASV pour négocier un port de données.
+     *
+     * @return Un socket connecté au port de données du serveur.
+     * @throws IOException Si le parsing de la réponse PASV échoue.
+     */
     private Socket openDataConnection() throws IOException {
 
         // Envoyer la commande PASV et lire la réponse
@@ -191,7 +250,40 @@ public class ClientFTP {
 
     }
 
+    /**
+     * Déplace la session FTP à la racine du serveur (/).
+     *
+     * @return true si succès.
+     */
+    public boolean changeDirectoryToRoot() throws IOException {
+        writer.println("CWD /"); // Commande pour aller à la racine
+        String response = readResponse();
+        return response.startsWith("250");
+    }
 
+
+    /**
+     * Navigue vers un chemin spécifique en changeant de dossier séquentiellement.
+     * Utilisé principalement pour l'algorithme BFS.
+     *
+     * @param path Le chemin relatif à atteindre (ex: "dossier1/sous_dossier").
+     * @return true si tout le chemin a été parcouru avec succès.
+     */
+    public boolean changeDirectoryPath(String path) throws IOException {
+        // Si le chemin est vide, on reste à la racine
+        if (path == null || path.isEmpty()) return true;
+
+        // On découpe le chemin par "/"
+        String[] folders = path.split("/");
+
+        for (String folder : folders) {
+            if (folder.isEmpty()) continue;
+            // On entre dossier par dossier
+            boolean success = changeDirectory(folder);
+            if (!success) return false; // Si un dossier échoue, on arrête
+        }
+        return true;
+    }
 
 
 

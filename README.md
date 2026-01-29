@@ -1,93 +1,306 @@
-# SR1_Projet1_Sid Ahmed_Ferroudj
+# Client FTP – Exploration d'Arborescence
 
+**Auteur :** Sid-Ahmed Ferroudj  
+**Date :** 29/01/2026
 
+---
 
-## Getting started
+## Introduction
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Ce projet est un client FTP en ligne de commande développé en **Java**.  
+Il permet de se connecter à un serveur FTP distant, d'explorer son arborescence de fichiers et d'afficher le résultat sous différentes formes.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+L'objectif principal est de fournir un outil flexible capable de :
 
-## Add your files
+- Parcourir récursivement les dossiers (similaire à la commande `tree` sous Linux).
+- Générer une sortie structurée au format JSON.
+- Explorer l'arborescence couche par couche (**Breadth-First Search**).
+- Filtrer les résultats (dossiers uniquement) et afficher les permissions.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+---
 
+## Instructions de Build et d'Exécution
+
+### Prérequis
+
+- Java **JDK 17** ou supérieur
+- Une connexion internet (pour les tests sur serveurs publics)
+
+---
+
+### Compilation
+
+Pour compiler le projet depuis la racine :
+
+```bash
+# Création du dossier de destination (si nécessaire)
+mkdir -p bin
+
+# Compilation de l'ensemble des sources
+javac -d bin src/fr/univlille/sr1/treeftp/*.java
 ```
-cd existing_repo
-git remote add origin https://gitlab.univ-lille.fr/sidahmed.ferroudj.etu/sr1_projet1_sid-ahmed_ferroudj.git
-git branch -M main
-git push -uf origin main
+
+---
+
+### Exécution
+
+Deux méthodes sont possibles pour lancer l'application :
+
+---
+
+## Option 1 (Recommandée) : Exécution via un JAR
+
+Le projet peut être empaqueté sous forme d'une archive Java (**JAR**) exécutable.
+
+### 1. Création du JAR
+
+```bash
+jar cfe TreeFtp.jar fr.univlille.sr1.treeftp.Main -C bin .
 ```
 
-## Integrate with your tools
+### 2. Lancement via le JAR
 
-- [ ] [Set up project integrations](https://gitlab.univ-lille.fr/sidahmed.ferroudj.etu/sr1_projet1_sid-ahmed_ferroudj/-/settings/integrations)
+```bash
+java -jar TreeFtp.jar ftp.free.fr 21 anonymous guest
+```
 
-## Collaborate with your team
+---
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+## Option 2 : Exécution classique (via classpath)
 
-## Test and Deploy
+Pour lancer directement depuis le dossier `bin` :
 
-Use the built-in continuous integration in GitLab.
+```bash
+java -cp bin fr.univlille.sr1.treeftp.Main <serveur> [port] [user] [pass] [OPTIONS]
+```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+### Exemple concret (serveur public)
 
-***
+```bash
+java -cp bin fr.univlille.sr1.treeftp.Main ftp.free.fr 21 anonymous guest -depth 1
+```
 
-# Editing this README
+> **Note :** Le serveur `ftp.ubuntu.com` répondant parfois lentement aux commandes passives,  
+> il est recommandé d'utiliser `ftp.free.fr` pour les tests publics.
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+---
 
-## Suggestions for a good README
+## Génération du JAR (Exécutable)
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+Le projet peut être empaqueté sous forme d'une archive Java (**JAR**) exécutable.
 
-## Name
-Choose a self-explaining name for your project.
+### 1. Création du JAR
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Utilisez la commande suivante pour générer l'archive `TreeFtp.jar` :
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+```bash
+jar cfe TreeFtp.jar fr.univlille.sr1.treeftp.Main -C bin .
+```
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+### 2. Exécution via le JAR
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+Lancez ensuite l'application directement :
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+```bash
+java -jar TreeFtp.jar ftp.free.fr 21 anonymous guest
+```
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+---
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+## Options Disponibles
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+| Option | Description |
+|-------|-------------|
+| `-depth <n>` | Limite la profondeur de récursion (ex: `-depth 2`) |
+| `-json` | Affiche la sortie au format JSON |
+| `-bfs` | Utilise un parcours en largeur (**Breadth-First Search**) |
+| `-d` | Affiche uniquement les répertoires |
+| `-p` | Affiche les permissions (ex: `drwxr-xr-x`) |
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+---
 
-## License
-For open source projects, say how it is licensed.
+## Architecture Logicielle
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+L'application est structurée autour de **quatre classes principales**, respectant le principe de séparation des responsabilités (*Separation of Concerns*).
+
+### Classes Principales
+
+- **Main**  
+  Point d'entrée de l'application. Orchestre l'initialisation et la connexion FTP.
+
+- **AppConfig**  
+  Gère le parsing des arguments de ligne de commande et stocke la configuration  
+  (mode JSON, BFS, identifiants, etc.).
+
+- **ClientFTP**  
+  Encapsule la logique réseau bas niveau (Sockets, commandes FTP `USER`, `PASS`, `LIST`, `CWD`).  
+  Implémente une partie du protocole **RFC 959**.
+
+- **Explorer**  
+  Contient la logique algorithmique d'exploration (**DFS**, **BFS**, génération JSON).  
+  Utilise `ClientFTP` pour naviguer.
+
+---
+
+## Code Samples
+
+Voici 5 extraits illustrant des points intéressants de la conception.
+
+---
+
+### 1. Délégation de la Configuration (AppConfig)
+
+La classe `Main` ne gère pas directement le parsing des arguments.  
+Elle délègue cette tâche à `AppConfig`.
+
+```java
+// Dans Main.java
+public static void main(String[] args) {
+  try {
+    // Délégation du parsing (Separation of Concerns)
+    AppConfig config = new AppConfig(args);
+
+    // ... Lancement de l'application ...
+
+  } catch (IllegalArgumentException e) {
+    System.err.println("Erreur de configuration : " + e.getMessage());
+  }
+}
+```
+
+---
+
+### 2. Gestion de la Connexion de Données (Mode Passif)
+
+FTP nécessite deux canaux : commandes + données.  
+La commande `PASV` permet de récupérer dynamiquement l'IP et le port.
+
+```java
+// Dans ClientFTP.java
+private Socket openDataConnection() throws IOException {
+  writer.println("PASV");
+
+  // ... Parsing de la réponse "227 Entering Passive Mode (h1,h2,h3,h4,p1,p2)" ...
+
+  // Calcul du port selon la formule FTP (p1 * 256 + p2)
+  int dataPort = (p1 * 256) + p2;
+
+  // Connexion dédiée au transfert de données
+  return new Socket(ip, dataPort);
+}
+```
+
+---
+
+### 3. Exploration Récursive avec Limite de Profondeur (DFS)
+
+L'exploration standard utilise une récursion naturelle (**DFS**).  
+Une condition d'arrêt évite les parcours trop longs.
+
+```java
+// Dans Explorer.java
+private void explore(String prefix, int currentLevel) throws IOException {
+
+  if (isDir) {
+    // Condition d'arrêt : Ne pas dépasser la profondeur max
+    if (currentLevel >= maxDepth) return;
+
+    // Descente dans le dossier
+    if (client.changeDirectory(name)) {
+      explore(prefix + "|   ", currentLevel + 1);
+
+      // Remontée (Backtracking)
+      client.changeDirectoryUp();
+    }
+  }
+}
+```
+
+---
+
+### 4. Parcours en Largeur (BFS) avec File d'Attente
+
+Le mode BFS utilise une approche itérative avec une `Queue`  
+pour explorer niveau par niveau.
+
+```java
+// Dans Explorer.java
+private void exploreBfs() throws IOException {
+  Queue<String> queue = new LinkedList<>();
+  queue.add(""); // Racine
+
+  while (!queue.isEmpty()) {
+    String currentPath = queue.poll();
+
+    // Déplacement FTP vers la cible
+    client.changeDirectoryToRoot();
+    client.changeDirectoryPath(currentPath);
+
+    // ... Traitement et ajout des enfants ...
+  }
+}
+```
+
+---
+
+### 5. Génération de JSON Structuré
+
+Le JSON est généré manuellement pour éviter des dépendances externes.  
+L'indentation est calculée selon la profondeur.
+
+```java
+// Dans Explorer.java (Mode JSON)
+String indentProp = "  ".repeat(currentLevel + 2);
+
+System.out.println(indentProp + "\"name\": \"" + name + "\",");
+
+if (config.isShowPerms()) {
+  // Ajout conditionnel d'un champ JSON
+  System.out.println(indentProp + "\"permissions\": \"" + permissions + "\",");
+}
+```
+
+---
+
+## Tests et Validation
+
+Le projet inclut une suite de tests automatisés et un test unitaire.
+
+---
+
+### 1. Test Unitaire (Logique pure)
+
+Le fichier :
+
+- `src/fr/univlille/sr1/treeftp/AppConfigTest.java`
+
+permet de valider le parsing des arguments sans connexion réseau.
+
+Commande :
+
+```bash
+java -cp bin fr.univlille.sr1.treeftp.AppConfigTest
+```
+
+---
+
+### 2. Tests d'Intégration (Scripts)
+
+Des scripts sont fournis dans `scripts/` pour tester sur un serveur public (`ftp.free.fr`).
+
+- **Windows** : double-cliquez sur `scripts/test_public_free.bat`
+- **Linux / Mac** : exécutez :
+
+```bash
+./scripts/test_public_free.sh
+```
+
+Ces scripts testent :
+
+- L'affichage en arbre simple
+- L'export JSON filtré (dossiers uniquement)
+- Le mode BFS avec affichage des permissions
+
+
