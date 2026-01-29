@@ -14,6 +14,8 @@ public class AppConfig {
     private String password;
     private int maxDepth;
 
+    private boolean jsonMode = false;
+
     // Parse et valider les arguments de la ligne de commande
     public AppConfig(String[] args) throws IllegalArgumentException {
         if (args.length < 1) {
@@ -43,6 +45,10 @@ public class AppConfig {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Depth must be a valid number.");
         }
+
+        if (args.length >= 6 && args[5].equalsIgnoreCase("json")) {
+            this.jsonMode = true;
+        }
     }
 
 
@@ -58,6 +64,8 @@ public class AppConfig {
 
         String depthDisplay = (maxDepth == Integer.MAX_VALUE) ? "Unlimited" : String.valueOf(maxDepth);
         System.out.println(" Max Depth  : " + depthDisplay);
+
+        System.out.println(" Output Fmt : " + (jsonMode ? "JSON" : "Text Tree"));
         System.out.println("--------------------------------");
     }
 
@@ -67,4 +75,5 @@ public class AppConfig {
     public String getUser() { return user; }
     public String getPassword() { return password; }
     public int getMaxDepth() { return maxDepth; }
+    public boolean isJsonMode() { return jsonMode; }
 }

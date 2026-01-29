@@ -30,7 +30,7 @@ public class Main {
 
             if (loggedIn) {
                 Explorer explorer = new Explorer(client, config.getMaxDepth());
-                explorer.start();
+                explorer.start(config.isJsonMode());
             } else {
                 System.out.println("Login failed.");
             }

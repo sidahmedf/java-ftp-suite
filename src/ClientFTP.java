@@ -32,9 +32,6 @@ public class ClientFTP {
         } else {
             throw new IOException("Failed to connect to the FTP server : " + response);
         }
-
-
-
     }
 
 
