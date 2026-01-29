@@ -38,7 +38,7 @@ public class ClientFTP {
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         writer = new PrintWriter(socket.getOutputStream(), true);
 
-        String response = reader.readLine();
+        String response = readResponse();
         System.out.println("Server response: " + response);
 
         if (response.startsWith("220")) {
@@ -199,7 +199,23 @@ public class ClientFTP {
      */
     private String readResponse() throws IOException {
         String line = reader.readLine();
-        //System.out.println("SERVER: " + line);
+        if (line == null) return null;
+
+        // Format multi-lignes détecté : "XYZ-Texte"
+        if (line.length() >= 4 && line.charAt(3) == '-') {
+            String code = line.substring(0, 3);
+            StringBuilder multiLineResponse = new StringBuilder(line);
+            String nextLine;
+
+            // On continue de lire tant qu'on n'a pas "XYZ " (avec un espace)
+            while ((nextLine = reader.readLine()) != null) {
+                multiLineResponse.append("\n").append(nextLine);
+                // Si la ligne commence par "XYZ ", c'est la fin du message
+                if (nextLine.startsWith(code + " ")) {
+                    return nextLine; // On renvoie la dernière ligne pour le check des codes (ex: 230)
+                }
+            }
+        }
         return line;
     }
 
