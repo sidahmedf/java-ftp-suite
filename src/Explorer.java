@@ -4,9 +4,11 @@ import java.util.List;
 public class Explorer {
 
     private  final ClientFTP client;
+    private final int maxDepth;
 
-    public Explorer(ClientFTP client) {
+    public Explorer(ClientFTP client, int maxDepth) {
         this.client = client;
+        this.maxDepth = maxDepth;
     }
 
     public void start() {
@@ -14,11 +16,12 @@ public class Explorer {
 
 
         try {
-            this.explore(".");
+            this.explore(".", 0);
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    private void explore(String prefix) throws IOException {
+    private void explore(String prefix, int currentLevel) throws IOException {
+
 
         // récupérer la liste des fichiers dans le répertoire courant
         List<String> files = client.listFiles();
@@ -48,17 +51,24 @@ public class Explorer {
             // récursivement explorer les répertoires
             if (type == 'd') {
 
+                // Ne pas dépasser la profondeur maximale
+                if (currentLevel >= maxDepth) {
+                    continue;
+                }
+
                 // Tenter d'aller dans le répertoire (CWD)
                 boolean moved = client.changeDirectory(name);
 
                 if (moved) {
                     //appeler récursivement explore avec un préfixe mis à jour
-                    explore(prefix + "|   ");
+                    explore(prefix + "|   ", currentLevel + 1);
 
                     // Remonter d'un répertoire (CDUP) après l'exploration
                     client.changeDirectoryUp();
                 }
             }
         }
+
+        System.out.println("Exploration complete.");
     }
 }

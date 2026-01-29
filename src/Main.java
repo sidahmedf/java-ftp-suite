@@ -1,40 +1,40 @@
-import java.io.IOException;
-
 public class Main {
 
     public static void main(String[] args) {
 
-
-        String server = "localhost";
-        //String server = "ftp.ubuntu.com";
-        //String server = "ftp.free.fr";
-        //String server = "ftp.gnu.org";
-        //String server = "ftp.funet.fi";
-        //String server = "ftp.debian.org";
-        //String server = "test.rebex.net"; // (logic: demo , password: password)
-
-        ClientFTP client = new ClientFTP();
-
         try {
 
-            // Connexion au serveur FTP
-            client.connect(server, 2121);
+            // Déléguer la gestion des arguments à AppConfig (Seperation of Concerns)
+            AppConfig config = new AppConfig(args);
 
-            // Tentative de login (hardcodée pour l'instant)
-            boolean loggedIn = client.login("anonymous", "guest");
+            // Afficher le status de la configuration maintenue par AppConfig
+            config.printStatus();
+
+            // Lancer l'application principale
+            runApplication(config);
+
+        } catch (IllegalArgumentException e) {
+            // Gérer les erreurs de configuration et afficher l'usage correct
+            System.out.println("Error: " + e.getMessage());
+            System.out.println("Usage: java Main <server> [port] [user] [pass]");
+        }
+    }
+
+    // Une méthode pour exécuter l'application principale
+    private static void runApplication(AppConfig config) {
+        ClientFTP client = new ClientFTP();
+        try {
+            client.connect(config.getServer(), config.getPort());
+
+            boolean loggedIn = client.login(config.getUser(), config.getPassword());
 
             if (loggedIn) {
-
-                Explorer explorer = new Explorer(client);
+                Explorer explorer = new Explorer(client, config.getMaxDepth());
                 explorer.start();
-
-
             } else {
                 System.out.println("Login failed.");
             }
-            // Déconnexion du serveur FTP
             client.disconnect();
-
 
         } catch (Exception e) {
             e.printStackTrace();
