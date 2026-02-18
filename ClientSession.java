@@ -7,12 +7,39 @@ import java.net.Socket;
 
 public class ClientSession implements Runnable {
     private final Socket socket;
-    private final CommandRouter router; // New!
+    private final CommandRouter router;
     private PrintWriter writer;
+    private String username = null;
+    private boolean isLoggedIn =false;
 
     public ClientSession(Socket socket) {
         this.socket = socket;
         this.router = new CommandRouter();
+
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public boolean isLoggedIn() {
+        return isLoggedIn;
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        isLoggedIn = loggedIn;
+    }
+
+    public void disconnect() {
+        try {
+            socket.close();
+        } catch (IOException e) {
+
+        }
     }
 
     public void sendMessage(String message) {

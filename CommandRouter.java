@@ -8,6 +8,10 @@ public class CommandRouter {
     public CommandRouter() {
 
         commandMap.put("USER", new UserCommand());
+        commandMap.put("PASS", new PassCommand());
+        commandMap.put("QUIT", new QuitCommand());
+
+        //commandMap.put("OPTS", (s, a) -> s.sendMessage("200 OK"));
     }
 
     public void route(ClientSession session, String message) {
