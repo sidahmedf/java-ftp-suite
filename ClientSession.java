@@ -7,26 +7,34 @@ import java.net.Socket;
 
 public class ClientSession implements Runnable {
     private final Socket socket;
+    private final CommandRouter router; // New!
+    private PrintWriter writer;
 
     public ClientSession(Socket socket) {
         this.socket = socket;
+        this.router = new CommandRouter();
     }
 
+    public void sendMessage(String message) {
+        if (writer != null) {
+            writer.println(message);
+        }
+    }
     @Override
     public void run() {
-        try (
+        try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                PrintWriter writer = new PrintWriter(socket.getOutputStream(), true)
-        ) {
+                 writer = new PrintWriter(socket.getOutputStream(), true);
 
-            writer.println("220 Welcome to SR1 FTP Server");
+
+            sendMessage("220 Welcome to SR1 FTP Server");
 
             String clientMessage;
             while ((clientMessage = reader.readLine()) != null) {
                 System.out.println("Client " + socket.getInetAddress() + " " + clientMessage);
 
-                writer.println("not yet implemented.");
+                router.route(this, clientMessage);
             }
 
         } catch (IOException e) {
