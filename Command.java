@@ -1,8 +1,8 @@
 
 public interface Command {
     /**
-     * @param session The client session (so we can reply).
-     * @param args The argument (e.g., "sid" in "USER sid").
+     * @param session La session du client qui a envoyé la commande.
+     * @param args L'argument (e.g., "sid" dans "USER sid").
      */
     void execute(ClientSession session, String args);
 }
