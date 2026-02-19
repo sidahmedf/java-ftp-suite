@@ -13,7 +13,7 @@ public class CwdCommand implements Command {
 
         File newDir;
 
-        // Gérer les chemins absolus (commençant par /) ou relatifs
+        // Gérer les chemins absolus (commençant par /)
         if (args.startsWith("/")) {
 
             String cleanArg = args.substring(1);

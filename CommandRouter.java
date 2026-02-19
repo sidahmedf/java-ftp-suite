@@ -18,6 +18,9 @@ public class CommandRouter {
 
         commandMap.put("SYST", (session, args) -> session.sendMessage("215 UNIX Type: L8"));
         commandMap.put("XPWD", new PwdCommand()); // Pour résoudre problème vieux client Windows qui envoie XPWD au lieu de PWD
+
+        commandMap.put("PASV", new PasvCommand());
+
     }
 
     public void route(ClientSession session, String message) {

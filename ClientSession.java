@@ -7,6 +7,8 @@ import java.net.Socket;
 import java.io.File;
 import java.nio.file.Path;
 
+import java.net.ServerSocket;
+
 
 public class ClientSession implements Runnable {
     private final Socket socket;
@@ -17,6 +19,8 @@ public class ClientSession implements Runnable {
 
     private final File rootDirectory = new File(System.getProperty("user.dir"), "ftp_root");
     private File currentDirectory = rootDirectory;
+
+    private ServerSocket dataConnection;
 
     public ClientSession(Socket socket) {
         this.socket = socket;
@@ -81,6 +85,15 @@ public class ClientSession implements Runnable {
 
         return "/" + relative;
     }
+
+    public ServerSocket getDataConnection() {
+        return dataConnection;
+    }
+
+    public void setDataConnection(ServerSocket dataConnection) {
+        this.dataConnection = dataConnection;
+    }
+
 
     @Override
     public void run() {
