@@ -12,7 +12,6 @@ public class CommandRouter {
         commandMap.put("QUIT", new QuitCommand());
         commandMap.put("PWD", new PwdCommand());
         commandMap.put("CWD", new CwdCommand());
-        commandMap.put("CDUP", new CwdCommand());
 
         commandMap.put("OPTS", (session, args) -> session.sendMessage("200 OK"));
 
@@ -20,6 +19,13 @@ public class CommandRouter {
         commandMap.put("XPWD", new PwdCommand()); // Pour résoudre problème vieux client Windows qui envoie XPWD au lieu de PWD
 
         commandMap.put("PASV", new PasvCommand());
+        commandMap.put("LIST", new ListCommand());
+        commandMap.put("TYPE", new TypeCommand());
+
+        commandMap.put("EPSV", new EpsvCommand());
+
+        commandMap.put("CDUP", (session, args) -> new CwdCommand().execute(session, "..")); // CDUP peut être traité comme CWD ..
+
 
     }
 
