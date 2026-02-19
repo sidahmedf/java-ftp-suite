@@ -26,6 +26,9 @@ public class CommandRouter {
 
         commandMap.put("CDUP", (session, args) -> new CwdCommand().execute(session, "..")); // CDUP peut être traité comme CWD ..
 
+        commandMap.put("RETR", new RetrCommand());
+
+        commandMap.put("STOR", new StorCommand());
 
     }
 
