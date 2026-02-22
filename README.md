@@ -21,22 +21,8 @@ Pour les étapes suivantes, ouvrez un terminal et placez-vous à la racine
 de projet. Assurez-vous d'avoir le JDK (Java Development Kit)
 installé.
 
-### 1. Comment générer la JavaDoc
 
-La commande suivante lit le code source et génère la documentation HTML.
-
--   **Commande (Windows / Linux) :**
-
-``` bash
-mkdir docs
-javadoc -d docs -sourcepath src src/Main.java src/server/*.java src/commands/*.java
-```
-
--   **Où la trouver ?** Une fois la commande exécutée, ouvrez le fichier
-    `index.html` qui vient d'être créé à l'intérieur du dossier `docs/`
-    avec n'importe quel navigateur web (Chrome, Firefox, etc.).
-
-### 2. Comment compiler et exécuter le code : Normal
+### 1. Comment compiler et exécuter le code : Normal
 
 Cette méthode compile directement le code source et lance le serveur
 depuis les fichiers `.class`.
@@ -53,7 +39,7 @@ javac -d bin -sourcepath src src/Main.java
     -   **Windows :** `java -cp bin Main`
     -   **Linux / Mac :** `java -cp bin Main`
 
-### 3. Comment compiler et exécuter le code : JAR
+### 2. Comment compiler et exécuter le code : JAR
 
 Cette méthode emboîte tout le code compilé dans un seul fichier
 exécutable `.jar`, ce qui rend le logiciel portable sur n'importe quel
@@ -81,7 +67,7 @@ java -jar ServeurFTP.jar
 > commande.
 
 
-### 4. Comment compiler et exécuter : Tests
+### 3. Comment compiler et exécuter : Tests
 
 Puisque ce projet n'utilise pas d'outil comme Maven, la compilation et
 l'exécution des tests en ligne de commande nécessitent la librairie
@@ -118,6 +104,21 @@ fichier `.jar` dans un dossier `lib/` à la racine de votre projet.
     ``` bash
     java -jar lib/junit-platform-console-standalone-1.14.3.jar -cp "bin:bin_test" --scan-classpath
     ```
+
+### 4. Comment générer la JavaDoc
+
+La commande suivante lit le code source et génère la documentation HTML.
+
+-   **Commande (Windows / Linux) :**
+
+``` bash
+mkdir docs
+javadoc -d docs -sourcepath src src/Main.java src/server/*.java src/commands/*.java
+```
+
+-   **Où la trouver ?** Une fois la commande exécutée, ouvrez le fichier
+    `index.html` qui vient d'être créé à l'intérieur du dossier `docs/`
+    avec n'importe quel navigateur web (Chrome, Firefox, etc.).
 
 ------------------------------------------------------------------------
 
