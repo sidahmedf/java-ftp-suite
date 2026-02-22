@@ -36,7 +36,52 @@ javadoc -d docs -sourcepath src src/Main.java src/server/*.java src/commands/*.j
     `index.html` qui vient d'être créé à l'intérieur du dossier `docs/`
     avec n'importe quel navigateur web (Chrome, Firefox, etc.).
 
-### 2. Comment compiler et exécuter : Tests
+### 2. Comment compiler et exécuter le code : Normal
+
+Cette méthode compile directement le code source et lance le serveur
+depuis les fichiers `.class`.
+
+-   **Commande de compilation (Windows / Linux) :**
+
+``` bash
+mkdir bin
+javac -d bin -sourcepath src src/Main.java
+```
+
+-   **Commande d'exécution :**
+
+    -   **Windows :** `java -cp bin Main`
+    -   **Linux / Mac :** `java -cp bin Main`
+
+### 3. Comment compiler et exécuter le code : JAR
+
+Cette méthode emboîte tout le code compilé dans un seul fichier
+exécutable `.jar`, ce qui rend le logiciel portable sur n'importe quel
+ordinateur disposant de Java.
+
+-   **Créer le fichier JAR (Windows / Linux) :** (Assurez-vous d'avoir
+    compilé le code avec l'étape 3 d'abord)
+
+``` bash
+jar cfe ServeurFTP.jar Main -C bin .
+```
+
+*Explication : `c` crée l'archive, `f` la nomme `ServeurFTP.jar`, et `e`
+définit `Main` comme point d'entrée.*
+
+-   **Exécuter le fichier JAR (Windows / Linux) :**
+
+``` bash
+java -jar ServeurFTP.jar
+```
+
+> **Note d'exécution :** Au lancement, le programme affichera
+> `Starting FTP Server on port 2121` et créera automatiquement un
+> dossier `ftp_root` dans le répertoire où vous avez exécuté la
+> commande.
+
+
+### 4. Comment compiler et exécuter : Tests
 
 Puisque ce projet n'utilise pas d'outil comme Maven, la compilation et
 l'exécution des tests en ligne de commande nécessitent la librairie
@@ -65,58 +110,14 @@ fichier `.jar` dans un dossier `lib/` à la racine de votre projet.
     -   **Windows :**
 
     ``` cmd
-    java -jar lib/junit-platform-console-standalone.jar -cp "bin;bin_test" --scan-classpath
+    java -jar lib/junit-platform-console-standalone-1.14.3.jar -cp "bin;bin_test" --scan-classpath
     ```
 
     -   **Linux / Mac :**
 
     ``` bash
-    java -jar lib/junit-platform-console-standalone.jar -cp "bin:bin_test" --scan-classpath
+    java -jar lib/junit-platform-console-standalone-1.14.3.jar -cp "bin:bin_test" --scan-classpath
     ```
-
-### 3. Comment compiler et exécuter le code : Normal
-
-Cette méthode compile directement le code source et lance le serveur
-depuis les fichiers `.class`.
-
--   **Commande de compilation (Windows / Linux) :**
-
-``` bash
-mkdir bin
-javac -d bin -sourcepath src src/Main.java
-```
-
--   **Commande d'exécution :**
-
-    -   **Windows :** `java -cp bin Main`
-    -   **Linux / Mac :** `java -cp bin Main`
-
-### 4. Comment compiler et exécuter le code : JAR
-
-Cette méthode emboîte tout le code compilé dans un seul fichier
-exécutable `.jar`, ce qui rend le logiciel portable sur n'importe quel
-ordinateur disposant de Java.
-
--   **Créer le fichier JAR (Windows / Linux) :** (Assurez-vous d'avoir
-    compilé le code avec l'étape 3 d'abord)
-
-``` bash
-jar cfe ServeurFTP.jar Main -C bin .
-```
-
-*Explication : `c` crée l'archive, `f` la nomme `ServeurFTP.jar`, et `e`
-définit `Main` comme point d'entrée.*
-
--   **Exécuter le fichier JAR (Windows / Linux) :**
-
-``` bash
-java -jar ServeurFTP.jar
-```
-
-> **Note d'exécution :** Au lancement, le programme affichera
-> `Starting FTP Server on port 2121` et créera automatiquement un
-> dossier `ftp_root` dans le répertoire où vous avez exécuté la
-> commande.
 
 ------------------------------------------------------------------------
 
@@ -126,6 +127,7 @@ Pour simplifier les tests, l'authentification est actuellement codée en
 dur (hard-coded) dans le système. Voici les identifiants à utiliser dans
 FileZilla ou tout autre client FTP :
  ------------------ -------------------
+**Adresse**    `localhost`
 **Utilisateur**    `user`
 **Mot de passe**   `sr1`
 **Port**           `2121`
