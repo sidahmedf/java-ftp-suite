@@ -1,11 +1,44 @@
+package commands;
+import server.ClientSession;
+
+/**
+ * CwdCommand.java
+ *
+ * Implémentation de la commande FTP "CWD".
+ * Cette commande permet au client de changer le répertoire
+ * courant sur le serveur FTP.
+ *
+ * Auteur : Sid Ahmed Ferroudj
+ * Date   : Février 2026
+ */
+
 
 import java.io.File;
 import java.io.IOException;
 
+
+/**
+ * Classe CwdCommand
+ * ----------------
+ * Gère la commande "CWD".
+ * - Vérifie que l’utilisateur est connecté.
+ * - Résout les chemins absolus et relatifs.
+ * - Applique une restriction de type chroot pour la sécurité.
+ * - Met à jour le répertoire courant de la session.
+ */
 public class CwdCommand implements Command {
+    /**
+     * Méthode execute()
+     * -----------------
+     * Traite la commande "CWD".
+     *
+     * @param session La session du client qui a envoyé la commande.
+     * @param args    Nom ou chemin du répertoire cible.
+     */
     @Override
     public void execute(ClientSession session, String args) {
 
+        // Sécurité : Vérifier que le client est connecté
         if (!session.isLoggedIn()) {
             session.sendMessage("530 Not logged in.");
             return;

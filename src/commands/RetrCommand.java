@@ -1,20 +1,51 @@
+package commands;
+import server.ClientSession;
 
+
+/**
+ * RetrCommand.java
+ *
+ * Implémentation de la commande FTP "RETR".
+ * Cette commande permet au client de télécharger un fichier
+ * depuis le serveur via le canal de données.
+ *
+ * Auteur : Sid Ahmed Ferroudj
+ * Date   : Février 2026
+ */
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 
+/**
+ * Classe RetrCommand
+ * -----------------
+ * Gère la commande "RETR".
+ * - Vérifie que l’utilisateur est connecté.
+ * - Vérifie qu’une connexion de données est disponible (PASV/EPSV).
+ * - Applique une restriction de type chroot pour la sécurité.
+ * - Envoie le contenu du fichier demandé au client.
+ */
 public class RetrCommand implements Command {
+    /**
+     * Méthode execute()
+     * -----------------
+     * Traite la commande "RETR".
+     *
+     * @param session La session du client qui a envoyé la commande.
+     * @param args    Nom ou chemin du fichier à télécharger.
+     */
     @Override
     public void execute(ClientSession session, String args) {
-        // 1. Le Vigile
+
+        // sécurité : vérifier que le client est connecté
         if (!session.isLoggedIn()) {
             session.sendMessage("530 Not logged in.");
             return;
         }
 
-        // 2. Vérifier que la porte de données est prête
+        //  Vérifier que la porte de données est prête
         if (session.getDataConnection() == null) {
             session.sendMessage("425 Use PASV or EPSV first.");
             return;
@@ -26,7 +57,7 @@ public class RetrCommand implements Command {
         }
 
         try {
-            // 3. Trouver le fichier demandé et le sécuriser (Chroot Jail)
+            //  Trouver le fichier demandé et le sécuriser (Chroot Jail)
             File fileToDownload;
             if (args.startsWith("/")) {
                 fileToDownload = new File(session.getRootDirectory(), args.substring(1)).getCanonicalFile();
@@ -65,12 +96,12 @@ public class RetrCommand implements Command {
                 session.sendMessage("426 Connection closed; transfer aborted.");
                 return;
             } finally {
-                // 6. Fermeture de la porte
+                // Fermeture de la porte
                 try { session.getDataConnection().close(); } catch (IOException e) {}
                 session.setDataConnection(null);
             }
 
-            // 7. Message de succès
+            // Message de succès
             session.sendMessage("226 Transfer complete.");
 
         } catch (IOException e) {

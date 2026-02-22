@@ -1,7 +1,39 @@
+package commands;
+import server.ClientSession;
+
+
+/**
+ * PasvCommand.java
+ *
+ * Implémentation de la commande FTP "PASV".
+ * Cette commande place le serveur en mode passif et ouvre
+ * une connexion de données sur un port aléatoire.
+ *
+ * Auteur : Sid Ahmed Ferroudj
+ * Date   : Février 2026
+ */
+
 import java.io.IOException;
 import java.net.ServerSocket;
 
+/**
+ * Classe PasvCommand
+ * ------------------
+ * Gère la commande "PASV" envoyée par le client.
+ * - Vérifie que l’utilisateur est connecté.
+ * - Ferme toute ancienne connexion de données.
+ * - Crée un nouveau ServerSocket sur un port libre.
+ * - Envoie au client la réponse 227 avec l’IP et le port.
+ */
 public class PasvCommand implements Command {
+    /**
+     * Méthode execute()
+     * -----------------
+     * Traite la commande "PASV".
+     *
+     * @param session La session du client qui a envoyé la commande.
+     * @param args    Arguments éventuels (non utilisés ici).
+     */
     @Override
     public void execute(ClientSession session, String args) {
 

@@ -1,3 +1,16 @@
+package commands;
+import server.ClientSession;
+
+/**
+ * ListCommand.java
+ *
+ * Implémentation de la commande FTP "LIST".
+ * Cette commande permet au client d’obtenir la liste des fichiers
+ * et dossiers présents dans le répertoire courant.
+ *
+ * Auteur : Sid Ahmed Ferroudj
+ * Date   : Février 2026
+ */
 
 import java.io.File;
 import java.io.IOException;
@@ -7,7 +20,25 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+
+/**
+ * Classe ListCommand
+ * ------------------
+ * Gère la commande "LIST" envoyée par le client.
+ * - Vérifie que l’utilisateur est connecté.
+ * - Vérifie qu’une connexion de données (PASV/PORT) est disponible.
+ * - Envoie la liste des fichiers via le canal de données.
+ * - Ferme la connexion de données après le transfert.
+ */
 public class ListCommand implements Command {
+    /**
+     * Méthode execute()
+     * -----------------
+     * Traite la commande "LIST".
+     *
+     * @param session La session du client qui a envoyé la commande.
+     * @param args    Arguments éventuels (non utilisés ici).
+     */
     @Override
     public void execute(ClientSession session, String args) {
         // Sécurité : Être connecté
@@ -56,7 +87,7 @@ public class ListCommand implements Command {
             session.sendMessage("426 Connection closed; transfer aborted.");
             return;
         } finally {
-            // Nettoyage : On détruit la porte de données.
+            // On détruit la porte de données.
             // En FTP, une connexion de données = UN SEUL transfert.
             try {
                 session.getDataConnection().close();
