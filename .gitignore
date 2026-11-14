@@ -1,0 +1,9 @@
+bin/
+bin_test/
+*.class
+*.jar
+!ftp-server/lib/*.jar
+.idea/
+*.iml
+.vscode/
+.DS_Store
